@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 27 managing cassettes | HTTP testing in R</title>
+<meta name="author" content="Scott Chamberlain, Maëlle Salmon">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.2"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.5.3/header-attrs.js"></script><script src="libs/jquery-3.5.1/jquery-3.5.1.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.5.3/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.5.3/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.3.9000/tabs.js"></script><script src="libs/bs3compat-0.2.3.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script><!-- Matomo --><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css">
+<script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script><script src="https://ropensci.org/scripts/matomo.js"></script><noscript><div class="inline-figure"><img src="https://ropensci.matomo.cloud/matomo.php?idsite=1&amp;rec=1" style="border:0;" alt=""></div></noscript>
+<!-- End Matomo Code --><script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/mark.js@8.11.1/dist/mark.min.js"></script><!-- CSS --><link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">HTTP testing in R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Preamble</a></li>
+<li class="book-part">Introduction</li>
+<li><a class="" href="http-in-r-101.html"><span class="header-section-number">2</span> HTTP in R 101</a></li>
+<li><a class="" href="graceful.html"><span class="header-section-number">3</span> Graceful HTTP R packages</a></li>
+<li><a class="" href="pkgs-testing-chapter.html"><span class="header-section-number">4</span> Packages for HTTP testing</a></li>
+<li class="book-part">Whole Game(s)</li>
+<li><a class="" href="introduction.html"><span class="header-section-number">5</span> Introduction</a></li>
+<li><a class="" href="vcr.html"><span class="header-section-number">6</span> Use vcr (&amp; webmockr)</a></li>
+<li><a class="" href="httptest.html"><span class="header-section-number">7</span> Use httptest</a></li>
+<li><a class="" href="mocking-pkgs-comparison.html"><span class="header-section-number">8</span> vcr and httptest</a></li>
+<li><a class="" href="webfakes.html"><span class="header-section-number">9</span> Use webfakes</a></li>
+<li><a class="" href="pkgs-comparison.html"><span class="header-section-number">10</span> vcr (&amp; webmockr), httptest, webfakes</a></li>
+<li class="book-part">Advanced Topics</li>
+<li><a class="" href="real-requests-chapter.html"><span class="header-section-number">11</span> Making real requests</a></li>
+<li><a class="" href="cran-preparedness.html"><span class="header-section-number">12</span> CRAN- (and Bioconductor) preparedness for your tests</a></li>
+<li><a class="" href="security-chapter.html"><span class="header-section-number">13</span> Security</a></li>
+<li><a class="" href="errors-chapter.html"><span class="header-section-number">14</span> Faking HTTP errors</a></li>
+<li class="book-part">webmockr</li>
+<li><a class="" href="mocking.html"><span class="header-section-number">15</span> Mocking HTTP Requests</a></li>
+<li><a class="" href="webmockr-stubs.html"><span class="header-section-number">16</span> stubs</a></li>
+<li><a class="" href="webmockr-testing.html"><span class="header-section-number">17</span> testing</a></li>
+<li><a class="" href="webmockr-utilities.html"><span class="header-section-number">18</span> utilities</a></li>
+<li class="book-part">vcr</li>
+<li><a class="" href="vcr-intro.html"><span class="header-section-number">19</span> Caching HTTP requests</a></li>
+<li><a class="" href="vcr-usage.html"><span class="header-section-number">20</span> vcr advanced usage</a></li>
+<li><a class="" href="vcr-configuration.html"><span class="header-section-number">21</span> vcr configuration</a></li>
+<li><a class="" href="record-modes.html"><span class="header-section-number">22</span> record modes</a></li>
+<li><a class="" href="request-matching.html"><span class="header-section-number">23</span> request matching</a></li>
+<li><a class="" href="debugging-your-tests-that-use-vcr.html"><span class="header-section-number">24</span> Debugging your tests that use vcr</a></li>
+<li><a class="" href="vcr-security.html"><span class="header-section-number">25</span> security</a></li>
+<li><a class="" href="lightswitch.html"><span class="header-section-number">26</span> Turning vcr on &amp; off</a></li>
+<li><a class="active" href="managing-cassettes.html"><span class="header-section-number">27</span> managing cassettes</a></li>
+<li><a class="" href="gotchas.html"><span class="header-section-number">28</span> gotchas</a></li>
+<li><a class="" href="session-info.html"><span class="header-section-number">29</span> Session info</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div class="alert alert-dismissible alert-warning">
+⚠️ We are currently working on improvements of this book. Watch the <a href="https://github.com/ropensci-books/http-testing">GitHub repository</a> or wait for a release announcement on <a href="https://ropensci.org/archive">rOpenSci blog</a>.
+</div>
+<div id="managing-cassettes" class="section level1" number="27">
+<h1>
+<span class="header-section-number">27</span> managing cassettes<a class="anchor" aria-label="anchor" href="#managing-cassettes"><i class="fas fa-link"></i></a>
+</h1>
+<div id="why-edit-cassettes" class="section level2" number="27.1">
+<h2>
+<span class="header-section-number">27.1</span> Why edit cassettes?<a class="anchor" aria-label="anchor" href="#why-edit-cassettes"><i class="fas fa-link"></i></a>
+</h2>
+<p>By design vcr is very good at recording HTTP interactions that actually took place.
+Now sometimes when testing/demo-ing your package you will want to use <em>fake</em> HTTP interactions.
+For instance:</p>
+<ul>
+<li>What happens if the web API returns a 503 code? Is there an informative error?</li>
+<li>What happens if it returns a 503 and then a 200 code? Does the retry work?</li>
+<li>What if the API returns too much data for even simple queries and you want to make your cassettes smaller?</li>
+</ul>
+<p>In all these cases, you can edit your cassettes as long as you are aware of the risks!</p>
+</div>
+<div id="risks-related-to-cassette-editing" class="section level2" number="27.2">
+<h2>
+<span class="header-section-number">27.2</span> Risks related to cassette editing<a class="anchor" aria-label="anchor" href="#risks-related-to-cassette-editing"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li>If you use a vcr cassette where you replace a 200 code with a 503 code, and vcr is turned off,
+the test will fail because the API will probably not return an error. Use <code><a href="https://docs.ropensci.org/vcr/reference/skip_if_vcr_off.html">vcr::skip_if_vcr_off()</a></code>.</li>
+<li>If you edit cassettes by hand you can’t re-record them easily, you’d need to re-record them then re-apply your edits.</li>
+</ul>
+<p>Therefore you’ll need to develop a good workflow.</p>
+</div>
+<div id="example-1-test-using-an-edited-cassette-with-a-503" class="section level2" number="27.3">
+<h2>
+<span class="header-section-number">27.3</span> Example 1: test using an edited cassette with a 503<a class="anchor" aria-label="anchor" href="#example-1-test-using-an-edited-cassette-with-a-503"><i class="fas fa-link"></i></a>
+</h2>
+<p>First, write your test e.g.</p>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="managing-cassettes.html#cb147-1"></a>vcr<span class="op">::</span><span class="kw">use_cassette</span>(<span class="st">"api-error"</span>, {</span>
+<span id="cb147-2"><a href="managing-cassettes.html#cb147-2"></a>  <span class="kw">testhat</span>(<span class="st">"Errors are handled well"</span>, {</span>
+<span id="cb147-3"><a href="managing-cassettes.html#cb147-3"></a>    vcr<span class="op">::</span><span class="kw">skip_if_vcr_off</span>()</span>
+<span id="cb147-4"><a href="managing-cassettes.html#cb147-4"></a>    <span class="kw">expect_error</span>(<span class="kw">call_my_api</span>()), <span class="st">"error message"</span><span class="er">)</span></span>
+<span id="cb147-5"><a href="managing-cassettes.html#cb147-5"></a>  })</span>
+<span id="cb147-6"><a href="managing-cassettes.html#cb147-6"></a>})</span></code></pre></div>
+<p>Then run your tests a first time.</p>
+<ol style="list-style-type: decimal">
+<li>It will fail</li>
+<li>It will have created a cassette under <code>tests/fixtures/api-error.yml</code> that looks
+something like</li>
+</ol>
+<div class="sourceCode" id="cb148"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb148-1"><a href="managing-cassettes.html#cb148-1"></a><span class="fu">http_interactions</span><span class="kw">:</span></span>
+<span id="cb148-2"><a href="managing-cassettes.html#cb148-2"></a><span class="kw">-</span><span class="at"> </span><span class="fu">request</span><span class="kw">:</span></span>
+<span id="cb148-3"><a href="managing-cassettes.html#cb148-3"></a><span class="at">    </span><span class="fu">method</span><span class="kw">:</span><span class="at"> get</span></span>
+<span id="cb148-4"><a href="managing-cassettes.html#cb148-4"></a><span class="at">    </span><span class="fu">uri</span><span class="kw">:</span><span class="at"> https://eu.httpbin.org/get</span></span>
+<span id="cb148-5"><a href="managing-cassettes.html#cb148-5"></a><span class="at">    </span><span class="fu">body</span><span class="kw">:</span></span>
+<span id="cb148-6"><a href="managing-cassettes.html#cb148-6"></a><span class="at">      </span><span class="fu">encoding</span><span class="kw">:</span><span class="at"> </span><span class="st">''</span></span>
+<span id="cb148-7"><a href="managing-cassettes.html#cb148-7"></a><span class="at">      </span><span class="fu">string</span><span class="kw">:</span><span class="at"> </span><span class="st">''</span></span>
+<span id="cb148-8"><a href="managing-cassettes.html#cb148-8"></a><span class="at">    </span><span class="fu">headers</span><span class="kw">:</span></span>
+<span id="cb148-9"><a href="managing-cassettes.html#cb148-9"></a><span class="at">      </span><span class="fu">User-Agent</span><span class="kw">:</span><span class="at"> libcurl/7.54.0 r-curl/3.2 crul/0.5.2</span></span>
+<span id="cb148-10"><a href="managing-cassettes.html#cb148-10"></a><span class="at">  </span><span class="fu">response</span><span class="kw">:</span></span>
+<span id="cb148-11"><a href="managing-cassettes.html#cb148-11"></a><span class="at">    </span><span class="fu">status</span><span class="kw">:</span></span>
+<span id="cb148-12"><a href="managing-cassettes.html#cb148-12"></a><span class="at">      </span><span class="fu">status_code</span><span class="kw">:</span><span class="at"> </span><span class="st">'200'</span></span>
+<span id="cb148-13"><a href="managing-cassettes.html#cb148-13"></a><span class="at">      </span><span class="fu">message</span><span class="kw">:</span><span class="at"> OK</span></span>
+<span id="cb148-14"><a href="managing-cassettes.html#cb148-14"></a><span class="at">      </span><span class="fu">explanation</span><span class="kw">:</span><span class="at"> Request fulfilled, document follows</span></span>
+<span id="cb148-15"><a href="managing-cassettes.html#cb148-15"></a><span class="at">    </span><span class="fu">headers</span><span class="kw">:</span></span>
+<span id="cb148-16"><a href="managing-cassettes.html#cb148-16"></a><span class="at">      </span><span class="fu">status</span><span class="kw">:</span><span class="at"> HTTP/1.1 200 OK</span></span>
+<span id="cb148-17"><a href="managing-cassettes.html#cb148-17"></a><span class="at">      </span><span class="fu">connection</span><span class="kw">:</span><span class="at"> keep-alive</span></span>
+<span id="cb148-18"><a href="managing-cassettes.html#cb148-18"></a><span class="at">    </span><span class="fu">body</span><span class="kw">:</span></span>
+<span id="cb148-19"><a href="managing-cassettes.html#cb148-19"></a><span class="at">      </span><span class="fu">encoding</span><span class="kw">:</span><span class="at"> UTF-8</span></span>
+<span id="cb148-20"><a href="managing-cassettes.html#cb148-20"></a><span class="at">      </span><span class="fu">string</span><span class="kw">:</span><span class="at"> </span><span class="st">"{</span><span class="sc">\n</span><span class="st">  </span><span class="sc">\"</span><span class="st">args</span><span class="sc">\"</span><span class="st">: {}, </span><span class="sc">\n</span><span class="st">  </span><span class="sc">\"</span><span class="st">headers</span><span class="sc">\"</span><span class="st">: {</span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">Accept</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">application/json,</span></span>
+<span id="cb148-21"><a href="managing-cassettes.html#cb148-21"></a><span class="st">        text/xml, application/xml, */*</span><span class="sc">\"</span><span class="st">, </span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">Accept-Encoding</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">gzip, deflate</span><span class="sc">\"</span><span class="st">,</span></span>
+<span id="cb148-22"><a href="managing-cassettes.html#cb148-22"></a><span class="st">        </span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">Connection</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">close</span><span class="sc">\"</span><span class="st">, </span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">Host</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">httpbin.org</span><span class="sc">\"</span><span class="st">, </span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">User-Agent</span><span class="sc">\"</span><span class="st">:</span></span>
+<span id="cb148-23"><a href="managing-cassettes.html#cb148-23"></a><span class="st">        </span><span class="sc">\"</span><span class="st">libcurl/7.54.0 r-curl/3.2 crul/0.5.2</span><span class="sc">\"\n</span><span class="st">  }, </span><span class="sc">\n</span><span class="st">  </span><span class="sc">\"</span><span class="st">origin</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">111.222.333.444</span><span class="sc">\"</span><span class="st">,</span></span>
+<span id="cb148-24"><a href="managing-cassettes.html#cb148-24"></a><span class="st">        </span><span class="sc">\n</span><span class="st">  </span><span class="sc">\"</span><span class="st">url</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">https://eu.httpbin.org/get</span><span class="sc">\"\n</span><span class="st">}</span><span class="sc">\n</span><span class="st">"</span></span>
+<span id="cb148-25"><a href="managing-cassettes.html#cb148-25"></a><span class="at">  </span><span class="fu">recorded_at</span><span class="kw">:</span><span class="at"> 2018-04-03 22:55:02 GMT</span></span>
+<span id="cb148-26"><a href="managing-cassettes.html#cb148-26"></a><span class="at">  </span><span class="fu">recorded_with</span><span class="kw">:</span><span class="at"> vcr/0.1.0, webmockr/0.2.4, crul/0.5.2</span></span></code></pre></div>
+<p>You can edit to (new status code)</p>
+<div class="sourceCode" id="cb149"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb149-1"><a href="managing-cassettes.html#cb149-1"></a><span class="fu">http_interactions</span><span class="kw">:</span></span>
+<span id="cb149-2"><a href="managing-cassettes.html#cb149-2"></a><span class="kw">-</span><span class="at"> </span><span class="fu">request</span><span class="kw">:</span></span>
+<span id="cb149-3"><a href="managing-cassettes.html#cb149-3"></a><span class="at">    </span><span class="fu">method</span><span class="kw">:</span><span class="at"> get</span></span>
+<span id="cb149-4"><a href="managing-cassettes.html#cb149-4"></a><span class="at">    </span><span class="fu">uri</span><span class="kw">:</span><span class="at"> https://eu.httpbin.org/get</span></span>
+<span id="cb149-5"><a href="managing-cassettes.html#cb149-5"></a><span class="at">    </span><span class="fu">body</span><span class="kw">:</span></span>
+<span id="cb149-6"><a href="managing-cassettes.html#cb149-6"></a><span class="at">      </span><span class="fu">encoding</span><span class="kw">:</span><span class="at"> </span><span class="st">''</span></span>
+<span id="cb149-7"><a href="managing-cassettes.html#cb149-7"></a><span class="at">      </span><span class="fu">string</span><span class="kw">:</span><span class="at"> </span><span class="st">''</span></span>
+<span id="cb149-8"><a href="managing-cassettes.html#cb149-8"></a><span class="at">    </span><span class="fu">headers</span><span class="kw">:</span></span>
+<span id="cb149-9"><a href="managing-cassettes.html#cb149-9"></a><span class="at">      </span><span class="fu">User-Agent</span><span class="kw">:</span><span class="at"> libcurl/7.54.0 r-curl/3.2 crul/0.5.2</span></span>
+<span id="cb149-10"><a href="managing-cassettes.html#cb149-10"></a><span class="at">  </span><span class="fu">response</span><span class="kw">:</span></span>
+<span id="cb149-11"><a href="managing-cassettes.html#cb149-11"></a><span class="at">    </span><span class="fu">status</span><span class="kw">:</span></span>
+<span id="cb149-12"><a href="managing-cassettes.html#cb149-12"></a><span class="at">      </span><span class="fu">status_code</span><span class="kw">:</span><span class="at"> </span><span class="st">'503'</span></span></code></pre></div>
+<p>And run your test again, it should pass!
+Note the use of <code><a href="https://docs.ropensci.org/vcr/reference/skip_if_vcr_off.html">vcr::skip_if_vcr_off()</a></code>: if vcr is turned off, there is a real
+API request and most probably this request won’t get a 503 as a status code.</p>
+<div id="the-same-thing-with-webmockr" class="section level3" number="27.3.1">
+<h3>
+<span class="header-section-number">27.3.1</span> The same thing with webmockr<a class="anchor" aria-label="anchor" href="#the-same-thing-with-webmockr"><i class="fas fa-link"></i></a>
+</h3>
+<p>The advantage of the approach involving editing cassettes is that you only learn
+one thing, which is vcr.
+Now, by using the webmockr directly in your tests, you can also test for the
+behavior of your package in case of errors.
+Below we assume <code>api_url()</code> returns the URL <code>call_my_api()</code> calls.</p>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="managing-cassettes.html#cb150-1"></a><span class="kw">testhat</span>(<span class="st">"Errors are handled well"</span>, {</span>
+<span id="cb150-2"><a href="managing-cassettes.html#cb150-2"></a>  webmockr<span class="op">::</span><span class="kw">enable</span>()</span>
+<span id="cb150-3"><a href="managing-cassettes.html#cb150-3"></a>  stub &lt;-<span class="st"> </span>webmockr<span class="op">::</span><span class="kw">stub_request</span>(<span class="st">"get"</span>, <span class="kw">api_url</span>())</span>
+<span id="cb150-4"><a href="managing-cassettes.html#cb150-4"></a>  webmockr<span class="op">::</span><span class="kw">to_return</span>(stub, <span class="dt">status =</span> <span class="dv">503</span>)</span>
+<span id="cb150-5"><a href="managing-cassettes.html#cb150-5"></a>  <span class="kw">expect_error</span>(<span class="kw">call_my_api</span>()), <span class="st">"error message"</span><span class="er">)</span></span>
+<span id="cb150-6"><a href="managing-cassettes.html#cb150-6"></a>  webmockr<span class="op">::</span><span class="kw">disable</span>()</span>
+<span id="cb150-7"><a href="managing-cassettes.html#cb150-7"></a></span>
+<span id="cb150-8"><a href="managing-cassettes.html#cb150-8"></a>})</span></code></pre></div>
+<p>A big pro of this approach is that it works even when vcr is turned off.
+A con is that it’s quite different from the vcr syntax.</p>
+</div>
+</div>
+<div id="example-2-test-using-an-edited-cassette-with-a-503-then-a-200" class="section level2" number="27.4">
+<h2>
+<span class="header-section-number">27.4</span> Example 2: test using an edited cassette with a 503 then a 200<a class="anchor" aria-label="anchor" href="#example-2-test-using-an-edited-cassette-with-a-503-then-a-200"><i class="fas fa-link"></i></a>
+</h2>
+<p>Here we assume your package contains some sort of <a href="https://blog.r-hub.io/2020/04/07/retry-wheel/">retry</a>.</p>
+<p>First, write your test e.g.</p>
+<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="managing-cassettes.html#cb151-1"></a>vcr<span class="op">::</span><span class="kw">use_cassette</span>(<span class="st">"api-error"</span>, {</span>
+<span id="cb151-2"><a href="managing-cassettes.html#cb151-2"></a>  <span class="kw">testhat</span>(<span class="st">"Errors are handled well"</span>, {</span>
+<span id="cb151-3"><a href="managing-cassettes.html#cb151-3"></a>    vcr<span class="op">::</span><span class="kw">skip_if_vcr_off</span>()</span>
+<span id="cb151-4"><a href="managing-cassettes.html#cb151-4"></a>    <span class="kw">expect_message</span>(thing &lt;-<span class="st"> </span><span class="kw">call_my_api</span>()), <span class="st">"retry message"</span><span class="er">)</span></span>
+<span id="cb151-5"><a href="managing-cassettes.html#cb151-5"></a>    <span class="kw">expect_s4_class</span>(thing, <span class="st">"data.frame"</span>)</span>
+<span id="cb151-6"><a href="managing-cassettes.html#cb151-6"></a>  })</span>
+<span id="cb151-7"><a href="managing-cassettes.html#cb151-7"></a>})</span></code></pre></div>
+<p>Then run your tests a first time.</p>
+<ol style="list-style-type: decimal">
+<li>It will fail</li>
+<li>It will have created a cassette under <code>tests/fixtures/api-error.yml</code> that looks
+something like</li>
+</ol>
+<div class="sourceCode" id="cb152"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb152-1"><a href="managing-cassettes.html#cb152-1"></a><span class="fu">http_interactions</span><span class="kw">:</span></span>
+<span id="cb152-2"><a href="managing-cassettes.html#cb152-2"></a><span class="kw">-</span><span class="at"> </span><span class="fu">request</span><span class="kw">:</span></span>
+<span id="cb152-3"><a href="managing-cassettes.html#cb152-3"></a><span class="at">    </span><span class="fu">method</span><span class="kw">:</span><span class="at"> get</span></span>
+<span id="cb152-4"><a href="managing-cassettes.html#cb152-4"></a><span class="at">    </span><span class="fu">uri</span><span class="kw">:</span><span class="at"> https://eu.httpbin.org/get</span></span>
+<span id="cb152-5"><a href="managing-cassettes.html#cb152-5"></a><span class="at">    </span><span class="fu">body</span><span class="kw">:</span></span>
+<span id="cb152-6"><a href="managing-cassettes.html#cb152-6"></a><span class="at">      </span><span class="fu">encoding</span><span class="kw">:</span><span class="at"> </span><span class="st">''</span></span>
+<span id="cb152-7"><a href="managing-cassettes.html#cb152-7"></a><span class="at">      </span><span class="fu">string</span><span class="kw">:</span><span class="at"> </span><span class="st">''</span></span>
+<span id="cb152-8"><a href="managing-cassettes.html#cb152-8"></a><span class="at">    </span><span class="fu">headers</span><span class="kw">:</span></span>
+<span id="cb152-9"><a href="managing-cassettes.html#cb152-9"></a><span class="at">      </span><span class="fu">User-Agent</span><span class="kw">:</span><span class="at"> libcurl/7.54.0 r-curl/3.2 crul/0.5.2</span></span>
+<span id="cb152-10"><a href="managing-cassettes.html#cb152-10"></a><span class="at">  </span><span class="fu">response</span><span class="kw">:</span></span>
+<span id="cb152-11"><a href="managing-cassettes.html#cb152-11"></a><span class="at">    </span><span class="fu">status</span><span class="kw">:</span></span>
+<span id="cb152-12"><a href="managing-cassettes.html#cb152-12"></a><span class="at">      </span><span class="fu">status_code</span><span class="kw">:</span><span class="at"> </span><span class="st">'200'</span></span>
+<span id="cb152-13"><a href="managing-cassettes.html#cb152-13"></a><span class="at">      </span><span class="fu">message</span><span class="kw">:</span><span class="at"> OK</span></span>
+<span id="cb152-14"><a href="managing-cassettes.html#cb152-14"></a><span class="at">      </span><span class="fu">explanation</span><span class="kw">:</span><span class="at"> Request fulfilled, document follows</span></span>
+<span id="cb152-15"><a href="managing-cassettes.html#cb152-15"></a><span class="at">    </span><span class="fu">headers</span><span class="kw">:</span></span>
+<span id="cb152-16"><a href="managing-cassettes.html#cb152-16"></a><span class="at">      </span><span class="fu">status</span><span class="kw">:</span><span class="at"> HTTP/1.1 200 OK</span></span>
+<span id="cb152-17"><a href="managing-cassettes.html#cb152-17"></a><span class="at">      </span><span class="fu">connection</span><span class="kw">:</span><span class="at"> keep-alive</span></span>
+<span id="cb152-18"><a href="managing-cassettes.html#cb152-18"></a><span class="at">    </span><span class="fu">body</span><span class="kw">:</span></span>
+<span id="cb152-19"><a href="managing-cassettes.html#cb152-19"></a><span class="at">      </span><span class="fu">encoding</span><span class="kw">:</span><span class="at"> UTF-8</span></span>
+<span id="cb152-20"><a href="managing-cassettes.html#cb152-20"></a><span class="at">      </span><span class="fu">string</span><span class="kw">:</span><span class="at"> </span><span class="st">"{</span><span class="sc">\n</span><span class="st">  </span><span class="sc">\"</span><span class="st">args</span><span class="sc">\"</span><span class="st">: {}, </span><span class="sc">\n</span><span class="st">  </span><span class="sc">\"</span><span class="st">headers</span><span class="sc">\"</span><span class="st">: {</span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">Accept</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">application/json,</span></span>
+<span id="cb152-21"><a href="managing-cassettes.html#cb152-21"></a><span class="st">        text/xml, application/xml, */*</span><span class="sc">\"</span><span class="st">, </span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">Accept-Encoding</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">gzip, deflate</span><span class="sc">\"</span><span class="st">,</span></span>
+<span id="cb152-22"><a href="managing-cassettes.html#cb152-22"></a><span class="st">        </span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">Connection</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">close</span><span class="sc">\"</span><span class="st">, </span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">Host</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">httpbin.org</span><span class="sc">\"</span><span class="st">, </span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">User-Agent</span><span class="sc">\"</span><span class="st">:</span></span>
+<span id="cb152-23"><a href="managing-cassettes.html#cb152-23"></a><span class="st">        </span><span class="sc">\"</span><span class="st">libcurl/7.54.0 r-curl/3.2 crul/0.5.2</span><span class="sc">\"\n</span><span class="st">  }, </span><span class="sc">\n</span><span class="st">  </span><span class="sc">\"</span><span class="st">origin</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">111.222.333.444</span><span class="sc">\"</span><span class="st">,</span></span>
+<span id="cb152-24"><a href="managing-cassettes.html#cb152-24"></a><span class="st">        </span><span class="sc">\n</span><span class="st">  </span><span class="sc">\"</span><span class="st">url</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">https://eu.httpbin.org/get</span><span class="sc">\"\n</span><span class="st">}</span><span class="sc">\n</span><span class="st">"</span></span>
+<span id="cb152-25"><a href="managing-cassettes.html#cb152-25"></a><span class="at">  </span><span class="fu">recorded_at</span><span class="kw">:</span><span class="at"> 2018-04-03 22:55:02 GMT</span></span>
+<span id="cb152-26"><a href="managing-cassettes.html#cb152-26"></a><span class="at">  </span><span class="fu">recorded_with</span><span class="kw">:</span><span class="at"> vcr/0.1.0, webmockr/0.2.4, crul/0.5.2</span></span></code></pre></div>
+<p>You can duplicate the HTTP interaction, and make the first one return a 503 status code.
+vcr will first use the first interaction, then the second one, when making the same request.</p>
+<div class="sourceCode" id="cb153"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb153-1"><a href="managing-cassettes.html#cb153-1"></a><span class="fu">http_interactions</span><span class="kw">:</span></span>
+<span id="cb153-2"><a href="managing-cassettes.html#cb153-2"></a><span class="kw">-</span><span class="at"> </span><span class="fu">request</span><span class="kw">:</span></span>
+<span id="cb153-3"><a href="managing-cassettes.html#cb153-3"></a><span class="at">    </span><span class="fu">method</span><span class="kw">:</span><span class="at"> get</span></span>
+<span id="cb153-4"><a href="managing-cassettes.html#cb153-4"></a><span class="at">    </span><span class="fu">uri</span><span class="kw">:</span><span class="at"> https://eu.httpbin.org/get</span></span>
+<span id="cb153-5"><a href="managing-cassettes.html#cb153-5"></a><span class="at">    </span><span class="fu">body</span><span class="kw">:</span></span>
+<span id="cb153-6"><a href="managing-cassettes.html#cb153-6"></a><span class="at">      </span><span class="fu">encoding</span><span class="kw">:</span><span class="at"> </span><span class="st">''</span></span>
+<span id="cb153-7"><a href="managing-cassettes.html#cb153-7"></a><span class="at">      </span><span class="fu">string</span><span class="kw">:</span><span class="at"> </span><span class="st">''</span></span>
+<span id="cb153-8"><a href="managing-cassettes.html#cb153-8"></a><span class="at">    </span><span class="fu">headers</span><span class="kw">:</span></span>
+<span id="cb153-9"><a href="managing-cassettes.html#cb153-9"></a><span class="at">      </span><span class="fu">User-Agent</span><span class="kw">:</span><span class="at"> libcurl/7.54.0 r-curl/3.2 crul/0.5.2</span></span>
+<span id="cb153-10"><a href="managing-cassettes.html#cb153-10"></a><span class="at">  </span><span class="fu">response</span><span class="kw">:</span></span>
+<span id="cb153-11"><a href="managing-cassettes.html#cb153-11"></a><span class="at">    </span><span class="fu">status</span><span class="kw">:</span></span>
+<span id="cb153-12"><a href="managing-cassettes.html#cb153-12"></a><span class="at">      </span><span class="fu">status_code</span><span class="kw">:</span><span class="at"> </span><span class="st">'503'</span></span>
+<span id="cb153-13"><a href="managing-cassettes.html#cb153-13"></a><span class="kw">-</span><span class="at"> </span><span class="fu">request</span><span class="kw">:</span></span>
+<span id="cb153-14"><a href="managing-cassettes.html#cb153-14"></a><span class="at">    </span><span class="fu">method</span><span class="kw">:</span><span class="at"> get</span></span>
+<span id="cb153-15"><a href="managing-cassettes.html#cb153-15"></a><span class="at">    </span><span class="fu">uri</span><span class="kw">:</span><span class="at"> https://eu.httpbin.org/get</span></span>
+<span id="cb153-16"><a href="managing-cassettes.html#cb153-16"></a><span class="at">    </span><span class="fu">body</span><span class="kw">:</span></span>
+<span id="cb153-17"><a href="managing-cassettes.html#cb153-17"></a><span class="at">      </span><span class="fu">encoding</span><span class="kw">:</span><span class="at"> </span><span class="st">''</span></span>
+<span id="cb153-18"><a href="managing-cassettes.html#cb153-18"></a><span class="at">      </span><span class="fu">string</span><span class="kw">:</span><span class="at"> </span><span class="st">''</span></span>
+<span id="cb153-19"><a href="managing-cassettes.html#cb153-19"></a><span class="at">    </span><span class="fu">headers</span><span class="kw">:</span></span>
+<span id="cb153-20"><a href="managing-cassettes.html#cb153-20"></a><span class="at">      </span><span class="fu">User-Agent</span><span class="kw">:</span><span class="at"> libcurl/7.54.0 r-curl/3.2 crul/0.5.2</span></span>
+<span id="cb153-21"><a href="managing-cassettes.html#cb153-21"></a><span class="at">  </span><span class="fu">response</span><span class="kw">:</span></span>
+<span id="cb153-22"><a href="managing-cassettes.html#cb153-22"></a><span class="at">    </span><span class="fu">status</span><span class="kw">:</span></span>
+<span id="cb153-23"><a href="managing-cassettes.html#cb153-23"></a><span class="at">      </span><span class="fu">status_code</span><span class="kw">:</span><span class="at"> </span><span class="st">'200'</span></span>
+<span id="cb153-24"><a href="managing-cassettes.html#cb153-24"></a><span class="at">      </span><span class="fu">message</span><span class="kw">:</span><span class="at"> OK</span></span>
+<span id="cb153-25"><a href="managing-cassettes.html#cb153-25"></a><span class="at">      </span><span class="fu">explanation</span><span class="kw">:</span><span class="at"> Request fulfilled, document follows</span></span>
+<span id="cb153-26"><a href="managing-cassettes.html#cb153-26"></a><span class="at">    </span><span class="fu">headers</span><span class="kw">:</span></span>
+<span id="cb153-27"><a href="managing-cassettes.html#cb153-27"></a><span class="at">      </span><span class="fu">status</span><span class="kw">:</span><span class="at"> HTTP/1.1 200 OK</span></span>
+<span id="cb153-28"><a href="managing-cassettes.html#cb153-28"></a><span class="at">      </span><span class="fu">connection</span><span class="kw">:</span><span class="at"> keep-alive</span></span>
+<span id="cb153-29"><a href="managing-cassettes.html#cb153-29"></a><span class="at">    </span><span class="fu">body</span><span class="kw">:</span></span>
+<span id="cb153-30"><a href="managing-cassettes.html#cb153-30"></a><span class="at">      </span><span class="fu">encoding</span><span class="kw">:</span><span class="at"> UTF-8</span></span>
+<span id="cb153-31"><a href="managing-cassettes.html#cb153-31"></a><span class="at">      </span><span class="fu">string</span><span class="kw">:</span><span class="at"> </span><span class="st">"{</span><span class="sc">\n</span><span class="st">  </span><span class="sc">\"</span><span class="st">args</span><span class="sc">\"</span><span class="st">: {}, </span><span class="sc">\n</span><span class="st">  </span><span class="sc">\"</span><span class="st">headers</span><span class="sc">\"</span><span class="st">: {</span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">Accept</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">application/json,</span></span>
+<span id="cb153-32"><a href="managing-cassettes.html#cb153-32"></a><span class="st">        text/xml, application/xml, */*</span><span class="sc">\"</span><span class="st">, </span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">Accept-Encoding</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">gzip, deflate</span><span class="sc">\"</span><span class="st">,</span></span>
+<span id="cb153-33"><a href="managing-cassettes.html#cb153-33"></a><span class="st">        </span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">Connection</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">close</span><span class="sc">\"</span><span class="st">, </span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">Host</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">httpbin.org</span><span class="sc">\"</span><span class="st">, </span><span class="sc">\n</span><span class="st">    </span><span class="sc">\"</span><span class="st">User-Agent</span><span class="sc">\"</span><span class="st">:</span></span>
+<span id="cb153-34"><a href="managing-cassettes.html#cb153-34"></a><span class="st">        </span><span class="sc">\"</span><span class="st">libcurl/7.54.0 r-curl/3.2 crul/0.5.2</span><span class="sc">\"\n</span><span class="st">  }, </span><span class="sc">\n</span><span class="st">  </span><span class="sc">\"</span><span class="st">origin</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">111.222.333.444</span><span class="sc">\"</span><span class="st">,</span></span>
+<span id="cb153-35"><a href="managing-cassettes.html#cb153-35"></a><span class="st">        </span><span class="sc">\n</span><span class="st">  </span><span class="sc">\"</span><span class="st">url</span><span class="sc">\"</span><span class="st">: </span><span class="sc">\"</span><span class="st">https://eu.httpbin.org/get</span><span class="sc">\"\n</span><span class="st">}</span><span class="sc">\n</span><span class="st">"</span></span>
+<span id="cb153-36"><a href="managing-cassettes.html#cb153-36"></a><span class="at">  </span><span class="fu">recorded_at</span><span class="kw">:</span><span class="at"> 2018-04-03 22:55:02 GMT</span></span>
+<span id="cb153-37"><a href="managing-cassettes.html#cb153-37"></a><span class="at">  </span><span class="fu">recorded_with</span><span class="kw">:</span><span class="at"> vcr/0.1.0, webmockr/0.2.4, crul/0.5.2</span></span></code></pre></div>
+<p>And run your test again, it should pass!
+Note the use of <code><a href="https://docs.ropensci.org/vcr/reference/skip_if_vcr_off.html">vcr::skip_if_vcr_off()</a></code>: if vcr is turned off, there is a real
+API request and most probably this request won’t get a 503 as a status code.</p>
+<div id="the-same-thing-with-webmockr-1" class="section level3" number="27.4.1">
+<h3>
+<span class="header-section-number">27.4.1</span> The same thing with webmockr<a class="anchor" aria-label="anchor" href="#the-same-thing-with-webmockr-1"><i class="fas fa-link"></i></a>
+</h3>
+<p>The advantage of the approach involving editing cassettes is that you only learn
+one thing, which is vcr.
+Now, by using the webmockr directly in your tests, you can also test for the
+behavior of your package in case of errors.
+Below we assume <code>api_url()</code> returns the URL <code>call_my_api()</code> calls.</p>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="managing-cassettes.html#cb154-1"></a><span class="kw">testhat</span>(<span class="st">"Errors are handled well"</span>, {</span>
+<span id="cb154-2"><a href="managing-cassettes.html#cb154-2"></a>  webmockr<span class="op">::</span><span class="kw">enable</span>()</span>
+<span id="cb154-3"><a href="managing-cassettes.html#cb154-3"></a>  stub &lt;-<span class="st"> </span>webmockr<span class="op">::</span><span class="kw">stub_request</span>(<span class="st">"get"</span>, <span class="kw">api_url</span>())</span>
+<span id="cb154-4"><a href="managing-cassettes.html#cb154-4"></a>  stub <span class="op">%&gt;%</span></span>
+<span id="cb154-5"><a href="managing-cassettes.html#cb154-5"></a><span class="st">  </span><span class="kw">to_return</span>(<span class="dt">status =</span> <span class="dv">503</span>)  <span class="op">%&gt;%</span></span>
+<span id="cb154-6"><a href="managing-cassettes.html#cb154-6"></a><span class="st">  </span><span class="kw">to_return</span>(<span class="dt">status =</span> <span class="dv">200</span>, <span class="dt">body =</span> <span class="st">"{</span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">args</span><span class="ch">\"</span><span class="st">: {}, </span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">headers</span><span class="ch">\"</span><span class="st">: {</span><span class="ch">\n</span><span class="st">    </span><span class="ch">\"</span><span class="st">Accept</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">application/json,</span></span>
+<span id="cb154-7"><a href="managing-cassettes.html#cb154-7"></a><span class="st">        text/xml, application/xml, */*</span><span class="ch">\"</span><span class="st">, </span><span class="ch">\n</span><span class="st">    </span><span class="ch">\"</span><span class="st">Accept-Encoding</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">gzip, deflate</span><span class="ch">\"</span><span class="st">,</span></span>
+<span id="cb154-8"><a href="managing-cassettes.html#cb154-8"></a><span class="st">        </span><span class="ch">\n</span><span class="st">    </span><span class="ch">\"</span><span class="st">Connection</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">close</span><span class="ch">\"</span><span class="st">, </span><span class="ch">\n</span><span class="st">    </span><span class="ch">\"</span><span class="st">Host</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">httpbin.org</span><span class="ch">\"</span><span class="st">, </span><span class="ch">\n</span><span class="st">    </span><span class="ch">\"</span><span class="st">User-Agent</span><span class="ch">\"</span><span class="st">:</span></span>
+<span id="cb154-9"><a href="managing-cassettes.html#cb154-9"></a><span class="st">        </span><span class="ch">\"</span><span class="st">libcurl/7.54.0 r-curl/3.2 crul/0.5.2</span><span class="ch">\"\n</span><span class="st">  }, </span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">origin</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">111.222.333.444</span><span class="ch">\"</span><span class="st">,</span></span>
+<span id="cb154-10"><a href="managing-cassettes.html#cb154-10"></a><span class="st">        </span><span class="ch">\n</span><span class="st">  </span><span class="ch">\"</span><span class="st">url</span><span class="ch">\"</span><span class="st">: </span><span class="ch">\"</span><span class="st">https://eu.httpbin.org/get</span><span class="ch">\"\n</span><span class="st">}</span><span class="ch">\n</span><span class="st">"</span>, <span class="dt">headers =</span> <span class="kw">list</span>(<span class="dt">b =</span> <span class="dv">6</span>))</span>
+<span id="cb154-11"><a href="managing-cassettes.html#cb154-11"></a>  <span class="kw">expect_message</span>(thing &lt;-<span class="st"> </span><span class="kw">call_my_api</span>()), <span class="st">"retry message"</span><span class="er">)</span></span>
+<span id="cb154-12"><a href="managing-cassettes.html#cb154-12"></a>    <span class="kw">expect_s4_class</span>(thing, <span class="st">"data.frame"</span>)</span>
+<span id="cb154-13"><a href="managing-cassettes.html#cb154-13"></a>  webmockr<span class="op">::</span><span class="kw">disable</span>()</span>
+<span id="cb154-14"><a href="managing-cassettes.html#cb154-14"></a></span>
+<span id="cb154-15"><a href="managing-cassettes.html#cb154-15"></a>})</span></code></pre></div>
+<p>The pro of this approach is the elegance of the stubbing, with the two different responses.
+Each webmockr function like <code><a href="https://docs.ropensci.org/webmockr/reference/to_return.html">to_return()</a></code> even has an argument <code>times</code> indicating the
+number of times the given response should be returned.</p>
+<p>The con is that on top of being different from vcr, in this case where we also needed
+a good response in the end (the one with a 200 code, and an actual body), writing the
+mock is much more cumbersome than just recording a vcr cassette.</p>
+<p>Be aware when you add your cassettes to either <code>.gitignore</code> and/or
+<code>.Rbuildignore</code>.</p>
+</div>
+</div>
+<div id="gitignore-cassettes" class="section level2" number="27.5">
+<h2>
+<span class="header-section-number">27.5</span> gitignore cassettes<a class="anchor" aria-label="anchor" href="#gitignore-cassettes"><i class="fas fa-link"></i></a>
+</h2>
+<p>The <a href="https://guide.freecodecamp.org/git/gitignore/">.gitignore</a> file lets you tell [git][] what files to
+ignore - those files are not tracked by git and if you share the git
+repository to the public web, those files in the <code>.gitignore</code> file
+won’t be shared in the public version.</p>
+<p>When using <code>vcr</code> you may want to include your cassettes in the
+<code>.gitignore</code> file. You may wan to when your cassettes contain sensitive
+data that you don’t want to have on the internet &amp; dont want to hide
+with <a href="vcr-security.html#api-keys-security">filter_sensitive_data</a>.</p>
+<p>You may want to have your cassettes included in your GitHub repo, both
+to be present when tests run on CI, and when others run your tests.</p>
+<p>There’s no correct answer on whether to gitignore your cassettes.
+Think about security implications and whether you want CI and human
+contributors to use previously created cassettes or to create/use their
+own.</p>
+</div>
+<div id="rbuildignore-cassettes" class="section level2" number="27.6">
+<h2>
+<span class="header-section-number">27.6</span> Rbuildignore cassettes<a class="anchor" aria-label="anchor" href="#rbuildignore-cassettes"><i class="fas fa-link"></i></a>
+</h2>
+<p>The <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#index-_002eRbuildignore-file">.Rbuildignore</a> file is used to tell R to ignore
+certain files/directories.</p>
+<p>There’s not a clear use case for why you’d want to add vcr cassettes
+to your <code>.Rbuildignore</code> file, but if you do be aware that will affect
+your vcr enabled tests.</p>
+</div>
+<div id="deleting-cassettes" class="section level2" number="27.7">
+<h2>
+<span class="header-section-number">27.7</span> deleting cassettes<a class="anchor" aria-label="anchor" href="#deleting-cassettes"><i class="fas fa-link"></i></a>
+</h2>
+<p>Removing a cassette is as easy as deleting in your file finder,
+or from the command line, or from within a text editor or RStudio.</p>
+<p>If you delete a cassette, on the next test run the cassette will
+be recorded again.</p>
+<p>If you do want to re-record a test to a cassette, instead of
+deleting the file you can toggle <a href="record-modes.html#record-modes">record modes</a>.</p>
+</div>
+<div id="cassette-file-types" class="section level2" number="27.8">
+<h2>
+<span class="header-section-number">27.8</span> cassette file types<a class="anchor" aria-label="anchor" href="#cassette-file-types"><i class="fas fa-link"></i></a>
+</h2>
+<p>For right now the only persistence option is yaml. So all files
+have a <code>.yml</code> extension.</p>
+<p>When other persister options are added, additional file types
+may be found. The next persister type is likely to be JSON,
+so if you use that option, you’d have <code>.json</code> files instead of
+<code>.yml</code> files.</p>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="lightswitch.html"><span class="header-section-number">26</span> Turning vcr on &amp; off</a></div>
+<div class="next"><a href="gotchas.html"><span class="header-section-number">28</span> gotchas</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#managing-cassettes"><span class="header-section-number">27</span> managing cassettes</a></li>
+<li><a class="nav-link" href="#why-edit-cassettes"><span class="header-section-number">27.1</span> Why edit cassettes?</a></li>
+<li><a class="nav-link" href="#risks-related-to-cassette-editing"><span class="header-section-number">27.2</span> Risks related to cassette editing</a></li>
+<li>
+<a class="nav-link" href="#example-1-test-using-an-edited-cassette-with-a-503"><span class="header-section-number">27.3</span> Example 1: test using an edited cassette with a 503</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#the-same-thing-with-webmockr"><span class="header-section-number">27.3.1</span> The same thing with webmockr</a></li></ul>
+</li>
+<li>
+<a class="nav-link" href="#example-2-test-using-an-edited-cassette-with-a-503-then-a-200"><span class="header-section-number">27.4</span> Example 2: test using an edited cassette with a 503 then a 200</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#the-same-thing-with-webmockr-1"><span class="header-section-number">27.4.1</span> The same thing with webmockr</a></li></ul>
+</li>
+<li><a class="nav-link" href="#gitignore-cassettes"><span class="header-section-number">27.5</span> gitignore cassettes</a></li>
+<li><a class="nav-link" href="#rbuildignore-cassettes"><span class="header-section-number">27.6</span> Rbuildignore cassettes</a></li>
+<li><a class="nav-link" href="#deleting-cassettes"><span class="header-section-number">27.7</span> deleting cassettes</a></li>
+<li><a class="nav-link" href="#cassette-file-types"><span class="header-section-number">27.8</span> cassette file types</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>HTTP testing in R</strong>" was written by Scott Chamberlain, Maëlle Salmon. It was last built on built on 2020-12-14.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>
